@@ -48,6 +48,25 @@
             position: relative;
         }
 
+        /* Nút Admin ẩn ở góc trên bên phải */
+        .admin-shortcut {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(247, 37, 133, 0.3);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .admin-shortcut:hover {
+            background: rgba(247, 37, 133, 0.25);
+        }
+
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -147,7 +166,7 @@
             border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
-        /* TRANG 2: Giao diện quét live rương test */
+        /* TRANG 2: Quét Live rương test */
         .dashboard-section {
             text-align: left;
         }
@@ -260,7 +279,7 @@
             opacity: 0.9;
         }
 
-        /* Modal Admin chung */
+        /* Modal Admin */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -381,10 +400,13 @@
 <body>
 
     <div class="container">
+        <!-- Nút tắt mở nhanh Admin ở góc phải -->
+        <button class="admin-shortcut" onclick="openAdminAuth()">Admin</button>
+
         <div class="status-badge">
             <span class="status-dot"></span> HỆ THỐNG HOẠT ĐỘNG
         </div>
-        <h2 class="title">RUONGTESTLINKVIP</h2>
+        <h2 class="title" id="titleClickCount">RUONGTESTLINKVIP</h2>
 
         <!-- Khung Nhập Key Người Dùng -->
         <div id="loginSection">
@@ -396,7 +418,7 @@
             <div id="msgBox" class="message-box"></div>
         </div>
 
-        <!-- TRANG 2: Tự động quét Live rương test < 20s (Phong cách vohoainam / livemira) -->
+        <!-- TRANG 2: Tự động quét Live rương test < 20s -->
         <div id="activeSection" style="display: none;" class="dashboard-section">
             <div class="session-info">
                 <div>
@@ -411,10 +433,7 @@
                 🔥 Đang quét LiveMira (Rương 20/16 tự động làm mới mỗi 2s):
             </p>
 
-            <!-- Danh sách phòng live rương test dưới 20s -->
-            <div class="live-room-list" id="liveRoomList">
-                <!-- Javascript sẽ render tự động các phòng live rương test ở đây -->
-            </div>
+            <div class="live-room-list" id="liveRoomList"></div>
         </div>
     </div>
 
@@ -447,14 +466,16 @@
 <script>
     let holdTimer;
     let holdCount = 0;
+    let clickAdminCounter = 0;
     let failCount = 0;
     const maxFails = 5;
     let currentActiveKey = null;
     let liveRefreshInterval = null;
 
     const holdBtn = document.getElementById('holdBtn');
-    const msgBox = document.getElementById('msgBox');
     const keyInput = document.getElementById('keyInput');
+    const msgBox = document.getElementById('msgBox');
+    const titleClickCount = document.getElementById('titleClickCount');
 
     if (!localStorage.getItem('adminKeysData')) {
         const defaultKeys = [
@@ -469,7 +490,7 @@
         msgBox.innerText = text;
     }
 
-    // Giữ nút ngầm 30s mở bảng Admin
+    // Cách 1: Giữ ngầm 30 giây vào Admin
     const startHold = (e) => {
         holdCount = 30;
         holdTimer = setInterval(() => {
@@ -477,9 +498,7 @@
             if (holdCount <= 0) {
                 clearInterval(holdTimer);
                 msgBox.style.display = "none";
-                document.getElementById('adminAuthModal').style.display = 'flex';
-                document.getElementById('adminPassInput').value = '';
-                document.getElementById('adminPassInput').focus();
+                openAdminAuth();
             }
         }, 1000);
     };
@@ -491,6 +510,21 @@
     holdBtn.addEventListener('mouseleave', cancelHold);
     holdBtn.addEventListener('touchstart', startHold);
     holdBtn.addEventListener('touchend', cancelHold);
+
+    // Cách 2: Nhấn vào tiêu đề / ô nhập key liên tục 30 lần để vào Admin
+    keyInput.addEventListener('click', () => {
+        clickAdminCounter++;
+        if (clickAdminCounter >= 30) {
+            clickAdminCounter = 0;
+            openAdminAuth();
+        }
+    });
+
+    function openAdminAuth() {
+        document.getElementById('adminAuthModal').style.display = 'flex';
+        document.getElementById('adminPassInput').value = '';
+        document.getElementById('adminPassInput').focus();
+    }
 
     // Kích hoạt Key vào trang 2
     holdBtn.addEventListener('click', () => {
@@ -516,14 +550,14 @@
             document.getElementById('activeKeyDisplay').innerText = enteredKey.substring(0, 12) + '...';
             
             startSessionTimer(60 * 60);
-            startLiveMiraScanner(); // Chạy bộ quét tự động tải lại rương test <20s
+            startLiveMiraScanner();
         } else {
             failCount++;
             showMessage(`Key không đúng hoặc đã bị hủy! (${failCount}/${maxFails})`, "error");
         }
     });
 
-    // Tạo key mới ngẫu nhiên
+    // Tạo key mới dạng ngẫu nhiên
     function generateNewKey() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         const segment = () => Array.from({length: 4}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
@@ -584,7 +618,6 @@
         alert("Đã sao chép key: " + text);
     }
 
-    // Xóa Key & Đá văng người dùng về trang 1
     function deleteKey(index, keyVal) {
         let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
         keys.splice(index, 1);
@@ -609,24 +642,4 @@
         document.getElementById(id).style.display = 'none';
     }
 
-    window.addEventListener('storage', () => {
-        if (currentActiveKey) {
-            let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
-            let exists = keys.some(k => k.key === currentActiveKey);
-            if (!exists) kickToHome();
-        }
-    });
-
-    // Bộ đếm ngược phiên làm việc trang 2
-    function startSessionTimer(duration) {
-        let timer = duration, minutes, seconds;
-        const display = document.getElementById('countdownDisplay');
-        const interval = setInterval(() => {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-            display.textContent = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
-            if (--timer < 0) {
-                clearInterval(interval);
-                kickToHome();
-            }
-     
+    window.a
