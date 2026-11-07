@@ -6,12 +6,13 @@
     <title>RUONGTESTLINKVIP</title>
     <style>
         :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --text-main: #c9d1d9;
+            --bg-color: #0b0e14;
+            --card-bg: #151b26;
+            --text-main: #f0f6fc;
             --text-sub: #8b949e;
             --accent: #f72585;
             --accent-hover: #b5179e;
+            --neon-glow: rgba(247, 37, 133, 0.4);
             --error: #ff4d4d;
             --success: #4ade80;
             --border: #30363d;
@@ -26,6 +27,7 @@
 
         body {
             background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 0%, rgba(247, 37, 133, 0.15), transparent 70%);
             color: var(--text-main);
             display: flex;
             justify-content: center;
@@ -37,22 +39,43 @@
         .container {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 30px;
             width: 100%;
-            max-width: 380px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            box-shadow: 0 0 25px var(--neon-glow);
             text-align: center;
+            position: relative;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+        }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
         }
 
         .title {
-            color: var(--accent);
-            font-size: 20px;
+            color: var(--text-main);
+            font-size: 22px;
             font-weight: 800;
             letter-spacing: 1.5px;
             margin-bottom: 25px;
-            text-transform: uppercase;
-            word-break: break-word;
+            text-shadow: 0 0 10px var(--accent);
         }
 
         .input-group {
@@ -64,54 +87,41 @@
             padding: 14px;
             background-color: var(--bg-color);
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 12px;
             color: var(--text-main);
             font-size: 14px;
             outline: none;
             text-align: center;
-            transition: border-color 0.2s;
+            transition: all 0.3s;
         }
 
         .input-field:focus {
             border-color: var(--accent);
+            box-shadow: 0 0 10px var(--neon-glow);
         }
 
         .btn-submit {
-            position: relative;
             width: 100%;
             padding: 14px;
-            background-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 0.5px;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: transform 0.1s, box-shadow 0.2s;
             user-select: none;
             -webkit-user-select: none;
         }
 
         .btn-submit:hover {
-            background-color: var(--accent-hover);
+            box-shadow: 0 0 15px var(--neon-glow);
         }
 
         .btn-submit:active {
             transform: scale(0.98);
-        }
-
-        .timer-badge {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 11px;
-            font-weight: normal;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 3px 7px;
-            border-radius: 12px;
-            color: #ffeb3b;
         }
 
         .message-box {
@@ -137,24 +147,23 @@
             border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
-        /* Màn hình đã kích hoạt key thành công */
         .timer-box {
             background-color: var(--bg-color);
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 14px;
             padding: 20px;
             margin-top: 15px;
         }
 
         .timer-display {
-            font-size: 36px;
+            font-size: 38px;
             font-weight: bold;
             color: var(--accent);
             margin: 10px 0;
             font-family: monospace;
+            text-shadow: 0 0 12px var(--neon-glow);
         }
 
-        /* Modal Overlay & Popups */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -169,13 +178,13 @@
         .modal-window {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 25px;
             width: 90%;
-            max-width: 350px;
+            max-width: 420px;
             position: relative;
             text-align: center;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
         .modal-title {
@@ -196,8 +205,21 @@
             cursor: pointer;
         }
 
+        .btn-generate {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
         .key-list {
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
             margin: 15px 0;
             text-align: left;
@@ -206,51 +228,80 @@
         .key-item {
             background: var(--bg-color);
             border: 1px solid var(--border);
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+        }
+
+        .key-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .key-code {
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 12px;
+            color: var(--accent);
+        }
+
+        .key-expire {
+            font-size: 10px;
+            color: var(--text-sub);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-copy {
+            background: #30363d;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
         }
 
         .btn-delete {
             background-color: var(--error);
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
-        }
-
-        .btn-delete:hover {
-            opacity: 0.9;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2 class="title">RUONGTESTLINKVIP.COM</h2>
+        <div class="status-badge">
+            <span class="status-dot"></span> HỆ THỐNG HOẠT ĐỘNG
+        </div>
+        <h2 class="title">RUONGTESTLINKVIP</h2>
 
         <!-- Khung Nhập Key Người Dùng -->
         <div id="loginSection">
             <div class="input-group">
-                <input type="text" id="keyInput" class="input-field" placeholder="Nhập key của bạn...">
+                <input type="text" id="keyInput" class="input-field" placeholder="Nhập key kích hoạt...">
             </div>
             
-            <button class="btn-submit" id="holdBtn">
-                KÍCH HOẠT KEY
-                <span class="timer-badge" id="timerBadge">30s</span>
-            </button>
+            <!-- Nút sạch sẽ không còn số 30s hiển thị -->
+            <button class="btn-submit" id="holdBtn">KÍCH HOẠT KEY</button>
             
             <div id="msgBox" class="message-box"></div>
         </div>
 
-        <!-- Mẫu Hiển Thị Sau Khi Kích Hoạt Thành Công -->
+        <!-- Màn Hình Kích Hoạt Thành Công -->
         <div id="activeSection" style="display: none;">
             <div class="timer-box">
                 <p style="color: var(--text-sub); font-size: 13px;">THỜI GIAN CÒN LẠI</p>
@@ -274,59 +325,50 @@
 
     <!-- Modal Bảng Quản Lý Admin -->
     <div class="modal-overlay" id="adminPanelModal">
-        <div class="modal-window" style="max-width: 400px;">
+        <div class="modal-window">
             <button class="btn-close" onclick="closeModal('adminPanelModal')">&times;</button>
             <h3 class="modal-title">QUẢN LÝ KEY ADMIN</h3>
-            <p style="font-size: 12px; color: var(--text-sub);">Danh sách key hiện có trên hệ thống:</p>
+            
+            <button class="btn-generate" onclick="generateNewKey()">+ TẠO KEY VIP MỚI (HẠN 1 NGÀY)</button>
             
             <div class="key-list" id="keyListContainer"></div>
             
-            <button class="btn-submit" onclick="closeModal('adminPanelModal')" style="background-color: var(--border);">ĐÓNG BẢNG</button>
+            <button class="btn-submit" onclick="closeModal('adminPanelModal')" style="background: var(--border);">ĐÓNG BẢNG</button>
         </div>
     </div>
 
 <script>
     let holdTimer;
-    let timeLeft = 30;
+    let holdCount = 0;
     let failCount = 0;
     const maxFails = 5;
+    let currentActiveKey = null;
 
     const holdBtn = document.getElementById('holdBtn');
-    const timerBadge = document.getElementById('timerBadge');
     const msgBox = document.getElementById('msgBox');
     const keyInput = document.getElementById('keyInput');
 
-    // Khởi tạo danh sách key mẫu nếu chưa lưu trong bộ nhớ
-    if (!localStorage.getItem('savedKeysList')) {
-        localStorage.setItem('savedKeysList', JSON.stringify([
-            'KEYVIP-8888-9999',
-            'KEYVIP-1234-5678',
-            'KEYVIP-TEST-LINK'
-        ]));
+    if (!localStorage.getItem('adminKeysData')) {
+        const defaultKeys = [
+            { key: 'FREE-AGVP-85DD-VDU5-MPH2', expire: Date.now() + 86400000 },
+            { key: 'FREE-DXZW-9BNW-6KRD-VMQB', expire: Date.now() + 86400000 }
+        ];
+        localStorage.setItem('adminKeysData', JSON.stringify(defaultKeys));
     }
 
-    // Hiển thị thông báo
     function showMessage(text, type) {
         msgBox.className = `message-box ${type}`;
         msgBox.innerText = text;
     }
 
-    // Xử lý giữ nút 30s vào Admin
+    // Giữ nút ngầm trong 30 giây để bật bảng nhập pass Admin
     const startHold = (e) => {
-        timeLeft = 30;
-        timerBadge.innerText = `${timeLeft}s`;
-        showMessage("Đang giữ... Giữ liên tục 30s để đăng nhập Admin!", "success");
-
+        holdCount = 30;
         holdTimer = setInterval(() => {
-            timeLeft--;
-            timerBadge.innerText = `${timeLeft}s`;
-
-            if (timeLeft <= 0) {
+            holdCount--;
+            if (holdCount <= 0) {
                 clearInterval(holdTimer);
                 msgBox.style.display = "none";
-                timerBadge.innerText = "30s";
-                
-                // Mở Modal đăng nhập Admin
                 document.getElementById('adminAuthModal').style.display = 'flex';
                 document.getElementById('adminPassInput').value = '';
                 document.getElementById('adminPassInput').focus();
@@ -336,13 +378,8 @@
 
     const cancelHold = () => {
         clearInterval(holdTimer);
-        if (timeLeft > 0 && timeLeft < 30) {
-            showMessage("Đã hủy! Bạn phải giữ liên tục đủ 30 giây.", "error");
-            timerBadge.innerText = "30s";
-        }
     };
 
-    // Gán sự kiện giữ trên Máy tính & Điện thoại
     holdBtn.addEventListener('mousedown', startHold);
     holdBtn.addEventListener('mouseup', cancelHold);
     holdBtn.addEventListener('mouseleave', cancelHold);
@@ -350,9 +387,9 @@
     holdBtn.addEventListener('touchstart', startHold);
     holdBtn.addEventListener('touchend', cancelHold);
 
-    // Kích hoạt key thường khi nhấp nhanh
+    // Kích hoạt Key bình thường
     holdBtn.addEventListener('click', () => {
-        if (timeLeft < 30 && timeLeft > 0) return; // Nếu đang trong thời gian giữ thì bỏ qua
+        if (holdCount < 30 && holdCount > 0) return;
 
         const enteredKey = keyInput.value.trim();
         if (!enteredKey) {
@@ -360,25 +397,39 @@
             return;
         }
 
-        let savedKeys = JSON.parse(localStorage.getItem('savedKeysList')) || [];
+        let savedKeys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
+        const foundKey = savedKeys.find(item => item.key === enteredKey);
 
-        if (savedKeys.includes(enteredKey)) {
-            // Nhập đúng Key -> Hiện đếm ngược 60:00
+        if (foundKey) {
+            if (Date.now() > foundKey.expire) {
+                showMessage("Key này đã hết hạn 1 ngày sử dụng!", "error");
+                return;
+            }
+            currentActiveKey = enteredKey;
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('activeSection').style.display = 'block';
             startSessionTimer(60 * 60);
         } else {
-            // Sai Key
             failCount++;
-            if (failCount >= maxFails) {
-                showMessage(`Key không tồn tại hoặc đã hết hạn! (${failCount}/${maxFails})`, "error");
-            } else {
-                showMessage(`Key đã được sử dụng hoặc sai key, vui lòng thử lại! (${failCount}/${maxFails})`, "error");
-            }
+            showMessage(`Key không đúng hoặc đã bị hủy! (${failCount}/${maxFails})`, "error");
         }
     });
 
-    // Xác nhận mật khẩu Admin
+    // Tạo key mới dạng ngẫu nhiên
+    function generateNewKey() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const segment = () => Array.from({length: 4}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+        const newKeyCode = `FREE-${segment()}-${segment()}-${segment()}-${segment()}`;
+        
+        const expireTime = Date.now() + (24 * 60 * 60 * 1000);
+        
+        let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
+        keys.push({ key: newKeyCode, expire: expireTime });
+        localStorage.setItem('adminKeysData', JSON.stringify(keys));
+        
+        renderKeyList();
+    }
+
     function verifyAdminPassword() {
         const pass = document.getElementById('adminPassInput').value.trim();
         if (pass === "THUANDEPTRAI") {
@@ -389,49 +440,82 @@
         }
     }
 
-    // Bảng quản lý Key Admin
     function openAdminPanel() {
         document.getElementById('adminPanelModal').style.display = 'flex';
         renderKeyList();
     }
 
     function renderKeyList() {
-        let keys = JSON.parse(localStorage.getItem('savedKeysList')) || [];
+        let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
         const container = document.getElementById('keyListContainer');
 
         if (keys.length === 0) {
-            container.innerHTML = '<p style="font-size: 13px; color: var(--text-sub); text-align: center;">Không còn key nào trong hệ thống.</p>';
+            container.innerHTML = '<p style="font-size: 13px; color: var(--text-sub); text-align: center;">Chưa có key nào.</p>';
             return;
         }
 
         let html = '';
-        keys.forEach((k, index) => {
+        keys.forEach((item, index) => {
+            const expireDate = new Date(item.expire).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' - ' + new Date(item.expire).toLocaleDateString();
             html += `
                 <div class="key-item">
-                    <span>${k}</span>
-                    <button class="btn-delete" onclick="deleteKey(${index})">Xóa</button>
+                    <div class="key-info">
+                        <span class="key-code">${item.key}</span>
+                        <span class="key-expire">Hạn: ${expireDate}</span>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn-copy" onclick="copyKey('${item.key}')">Copy</button>
+                        <button class="btn-delete" onclick="deleteKey(${index}, '${item.key}')">Xóa</button>
+                    </div>
                 </div>
             `;
         });
         container.innerHTML = html;
     }
 
-    function deleteKey(index) {
-        let keys = JSON.parse(localStorage.getItem('savedKeysList')) || [];
+    function copyKey(text) {
+        navigator.clipboard.writeText(text);
+        alert("Đã sao chép key: " + text);
+    }
+
+    function deleteKey(index, keyVal) {
+        let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
         keys.splice(index, 1);
-        localStorage.setItem('savedKeysList', JSON.stringify(keys));
+        localStorage.setItem('adminKeysData', JSON.stringify(keys));
+        
         renderKeyList();
+
+        if (currentActiveKey === keyVal) {
+            kickToHome();
+        }
+    }
+
+    function kickToHome() {
+        document.getElementById('activeSection').style.display = 'none';
+        document.getElementById('loginSection').style.display = 'block';
+        keyInput.value = '';
+        showMessage("Admin đã xóa key!", "error");
+        currentActiveKey = null;
     }
 
     function closeModal(id) {
         document.getElementById(id).style.display = 'none';
     }
 
-    // Bộ đếm ngược 60 phút cho key thành công
+    window.addEventListener('storage', () => {
+        if (currentActiveKey) {
+            let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
+            let exists = keys.some(k => k.key === currentActiveKey);
+            if (!exists) {
+                kickToHome();
+            }
+        }
+    });
+
     function startSessionTimer(duration) {
         let timer = duration, minutes, seconds;
         const display = document.getElementById('countdownDisplay');
-        setInterval(() => {
+        const interval = setInterval(() => {
             minutes = parseInt(timer / 60, 10);
             seconds = parseInt(timer % 60, 10);
 
@@ -441,7 +525,8 @@
             display.textContent = minutes + ":" + seconds;
 
             if (--timer < 0) {
-                timer = 0;
+                clearInterval(interval);
+                kickToHome();
             }
         }, 1000);
     }
