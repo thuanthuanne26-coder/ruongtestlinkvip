@@ -48,6 +48,20 @@
             position: relative;
         }
 
+        .admin-shortcut {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(247, 37, 133, 0.3);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -61,6 +75,7 @@
             margin-bottom: 15px;
             border: 1px solid rgba(74, 222, 128, 0.2);
         }
+
         .status-dot {
             width: 6px;
             height: 6px;
@@ -92,7 +107,6 @@
             font-size: 14px;
             outline: none;
             text-align: center;
-            transition: all 0.3s;
         }
 
         .input-field:focus {
@@ -109,19 +123,9 @@
             border-radius: 12px;
             font-size: 14px;
             font-weight: 700;
-            letter-spacing: 0.5px;
             cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.2s;
             user-select: none;
             -webkit-user-select: none;
-        }
-
-        .btn-submit:hover {
-            box-shadow: 0 0 15px var(--neon-glow);
-        }
-
-        .btn-submit:active {
-            transform: scale(0.98);
         }
 
         .message-box {
@@ -130,7 +134,6 @@
             border-radius: 8px;
             font-size: 13px;
             display: none;
-            word-break: break-word;
         }
 
         .message-box.error {
@@ -147,7 +150,7 @@
             border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
-        /* TRANG 2: Giao diện quét live rương test */
+        /* TRANG 2: Quét Live rương test */
         .dashboard-section {
             text-align: left;
         }
@@ -181,11 +184,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: border-color 0.2s;
-        }
-
-        .live-card:hover {
-            border-color: var(--accent);
         }
 
         .live-left {
@@ -256,11 +254,7 @@
             text-decoration: none;
         }
 
-        .btn-join:hover {
-            opacity: 0.9;
-        }
-
-        /* Modal Admin chung */
+        /* Modal Popups */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -281,7 +275,6 @@
             max-width: 420px;
             position: relative;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
         .modal-title {
@@ -381,12 +374,14 @@
 <body>
 
     <div class="container">
+        <!-- Nút Admin trực tiếp góc phải -->
+        <button class="admin-shortcut" onclick="openAdminAuth()">Admin</button>
+
         <div class="status-badge">
             <span class="status-dot"></span> HỆ THỐNG HOẠT ĐỘNG
         </div>
         <h2 class="title">RUONGTESTLINKVIP</h2>
 
-        <!-- Khung Nhập Key Người Dùng -->
         <div id="loginSection">
             <div class="input-group">
                 <input type="text" id="keyInput" class="input-field" placeholder="Nhập key kích hoạt...">
@@ -396,7 +391,6 @@
             <div id="msgBox" class="message-box"></div>
         </div>
 
-        <!-- TRANG 2: Tự động quét Live rương test < 20s (Phong cách vohoainam / livemira) -->
         <div id="activeSection" style="display: none;" class="dashboard-section">
             <div class="session-info">
                 <div>
@@ -411,10 +405,7 @@
                 🔥 Đang quét LiveMira (Rương 20/16 tự động làm mới mỗi 2s):
             </p>
 
-            <!-- Danh sách phòng live rương test dưới 20s -->
-            <div class="live-room-list" id="liveRoomList">
-                <!-- Javascript sẽ render tự động các phòng live rương test ở đây -->
-            </div>
+            <div class="live-room-list" id="liveRoomList"></div>
         </div>
     </div>
 
@@ -453,8 +444,8 @@
     let liveRefreshInterval = null;
 
     const holdBtn = document.getElementById('holdBtn');
-    const msgBox = document.getElementById('msgBox');
     const keyInput = document.getElementById('keyInput');
+    const msgBox = document.getElementById('msgBox');
 
     if (!localStorage.getItem('adminKeysData')) {
         const defaultKeys = [
@@ -469,17 +460,15 @@
         msgBox.innerText = text;
     }
 
-    // Giữ nút ngầm 30s mở bảng Admin
+    // Giữ nút 10 giây mở Admin
     const startHold = (e) => {
-        holdCount = 30;
+        holdCount = 10;
         holdTimer = setInterval(() => {
             holdCount--;
             if (holdCount <= 0) {
                 clearInterval(holdTimer);
                 msgBox.style.display = "none";
-                document.getElementById('adminAuthModal').style.display = 'flex';
-                document.getElementById('adminPassInput').value = '';
-                document.getElementById('adminPassInput').focus();
+                openAdminAuth();
             }
         }, 1000);
     };
@@ -492,13 +481,26 @@
     holdBtn.addEventListener('touchstart', startHold);
     holdBtn.addEventListener('touchend', cancelHold);
 
-    // Kích hoạt Key vào trang 2
+    function openAdminAuth() {
+        document.getElementById('adminAuthModal').style.display = 'flex';
+        document.getElementById('adminPassInput').value = '';
+        document.getElementById('adminPassInput').focus();
+    }
+
+    // Kích hoạt Key hoặc gõ thẳng key THUANDEPTRAI để vào Admin
     holdBtn.addEventListener('click', () => {
-        if (holdCount < 30 && holdCount > 0) return;
+        if (holdCount < 10 && holdCount > 0) return;
 
         const enteredKey = keyInput.value.trim();
         if (!enteredKey) {
             showMessage("Vui lòng nhập key hợp lệ!", "error");
+            return;
+        }
+
+        // Nếu nhập trực tiếp key THUANDEPTRAI thì mở bảng xác nhận Admin
+        if (enteredKey === "THUANDEPTRAI") {
+            keyInput.value = "";
+            openAdminAuth();
             return;
         }
 
@@ -516,14 +518,13 @@
             document.getElementById('activeKeyDisplay').innerText = enteredKey.substring(0, 12) + '...';
             
             startSessionTimer(60 * 60);
-            startLiveMiraScanner(); // Chạy bộ quét tự động tải lại rương test <20s
+            startLiveMiraScanner();
         } else {
             failCount++;
             showMessage(`Key không đúng hoặc đã bị hủy! (${failCount}/${maxFails})`, "error");
         }
     });
 
-    // Tạo key mới ngẫu nhiên
     function generateNewKey() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         const segment = () => Array.from({length: 4}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
@@ -584,7 +585,6 @@
         alert("Đã sao chép key: " + text);
     }
 
-    // Xóa Key & Đá văng người dùng về trang 1
     function deleteKey(index, keyVal) {
         let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
         keys.splice(index, 1);
@@ -617,7 +617,6 @@
         }
     });
 
-    // Bộ đếm ngược phiên làm việc trang 2
     function startSessionTimer(duration) {
         let timer = duration, minutes, seconds;
         const display = document.getElementById('countdownDisplay');
@@ -629,4 +628,15 @@
                 clearInterval(interval);
                 kickToHome();
             }
+        }, 1000);
+    }
+
+    function startLiveMiraScanner() {
+        renderLiveRooms();
+        liveRefreshInterval = setInterval(() => {
+            renderLiveRooms();
+        }, 2000);
+    }
+
+    function renderLiveRooms() {
      
