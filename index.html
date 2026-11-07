@@ -33,16 +33,16 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
 
         .container {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 30px;
+            padding: 25px;
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
             box-shadow: 0 0 25px var(--neon-glow);
             text-align: center;
             position: relative;
@@ -71,15 +71,15 @@
 
         .title {
             color: var(--text-main);
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             letter-spacing: 1.5px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-shadow: 0 0 10px var(--accent);
         }
 
         .input-group {
-            margin-bottom: 18px;
+            margin-bottom: 15px;
         }
 
         .input-field {
@@ -147,23 +147,120 @@
             border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
-        .timer-box {
-            background-color: var(--bg-color);
+        /* TRANG 2: Giao diện quét live rương test */
+        .dashboard-section {
+            text-align: left;
+        }
+
+        .session-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-color);
+            padding: 10px 14px;
+            border-radius: 10px;
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
-            margin-top: 15px;
+            margin-bottom: 15px;
+            font-size: 12px;
         }
 
-        .timer-display {
-            font-size: 38px;
-            font-weight: bold;
+        .live-room-list {
+            max-height: 280px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .live-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .live-card:hover {
+            border-color: var(--accent);
+        }
+
+        .live-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .room-icon {
+            background: rgba(247, 37, 133, 0.2);
             color: var(--accent);
-            margin: 10px 0;
-            font-family: monospace;
-            text-shadow: 0 0 12px var(--neon-glow);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1px solid rgba(247, 37, 133, 0.4);
         }
 
+        .room-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .room-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .room-meta {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        .live-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .countdown-tag {
+            background: rgba(255, 235, 59, 0.1);
+            color: #ffeb3b;
+            border: 1px solid rgba(255, 235, 59, 0.3);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .btn-join {
+            background: var(--success);
+            color: #0b0e14;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-join:hover {
+            opacity: 0.9;
+        }
+
+        /* Modal Admin chung */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -219,7 +316,7 @@
         }
 
         .key-list {
-            max-height: 220px;
+            max-height: 200px;
             overflow-y: auto;
             margin: 15px 0;
             text-align: left;
@@ -295,18 +392,28 @@
                 <input type="text" id="keyInput" class="input-field" placeholder="Nhập key kích hoạt...">
             </div>
             
-            <!-- Nút sạch sẽ không còn số 30s hiển thị -->
             <button class="btn-submit" id="holdBtn">KÍCH HOẠT KEY</button>
-            
             <div id="msgBox" class="message-box"></div>
         </div>
 
-        <!-- Màn Hình Kích Hoạt Thành Công -->
-        <div id="activeSection" style="display: none;">
-            <div class="timer-box">
-                <p style="color: var(--text-sub); font-size: 13px;">THỜI GIAN CÒN LẠI</p>
-                <div class="timer-display" id="countdownDisplay">60:00</div>
-                <p style="color: var(--success); font-size: 13px;">✓ Đã kích hoạt thành công!</p>
+        <!-- TRANG 2: Tự động quét Live rương test < 20s (Phong cách vohoainam / livemira) -->
+        <div id="activeSection" style="display: none;" class="dashboard-section">
+            <div class="session-info">
+                <div>
+                    <span style="color: var(--text-sub);">Key hạn:</span> <strong id="activeKeyDisplay" style="color: var(--accent);">VIP</strong>
+                </div>
+                <div>
+                    <span style="color: var(--text-sub);">Hết hạn sau:</span> <strong id="countdownDisplay" style="color: var(--success);">60:00</strong>
+                </div>
+            </div>
+
+            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px; text-align: center;">
+                🔥 Đang quét LiveMira (Rương 20/16 tự động làm mới mỗi 2s):
+            </p>
+
+            <!-- Danh sách phòng live rương test dưới 20s -->
+            <div class="live-room-list" id="liveRoomList">
+                <!-- Javascript sẽ render tự động các phòng live rương test ở đây -->
             </div>
         </div>
     </div>
@@ -343,6 +450,7 @@
     let failCount = 0;
     const maxFails = 5;
     let currentActiveKey = null;
+    let liveRefreshInterval = null;
 
     const holdBtn = document.getElementById('holdBtn');
     const msgBox = document.getElementById('msgBox');
@@ -361,7 +469,7 @@
         msgBox.innerText = text;
     }
 
-    // Giữ nút ngầm trong 30 giây để bật bảng nhập pass Admin
+    // Giữ nút ngầm 30s mở bảng Admin
     const startHold = (e) => {
         holdCount = 30;
         holdTimer = setInterval(() => {
@@ -376,18 +484,15 @@
         }, 1000);
     };
 
-    const cancelHold = () => {
-        clearInterval(holdTimer);
-    };
+    const cancelHold = () => { clearInterval(holdTimer); };
 
     holdBtn.addEventListener('mousedown', startHold);
     holdBtn.addEventListener('mouseup', cancelHold);
     holdBtn.addEventListener('mouseleave', cancelHold);
-
     holdBtn.addEventListener('touchstart', startHold);
     holdBtn.addEventListener('touchend', cancelHold);
 
-    // Kích hoạt Key bình thường
+    // Kích hoạt Key vào trang 2
     holdBtn.addEventListener('click', () => {
         if (holdCount < 30 && holdCount > 0) return;
 
@@ -408,25 +513,26 @@
             currentActiveKey = enteredKey;
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('activeSection').style.display = 'block';
+            document.getElementById('activeKeyDisplay').innerText = enteredKey.substring(0, 12) + '...';
+            
             startSessionTimer(60 * 60);
+            startLiveMiraScanner(); // Chạy bộ quét tự động tải lại rương test <20s
         } else {
             failCount++;
             showMessage(`Key không đúng hoặc đã bị hủy! (${failCount}/${maxFails})`, "error");
         }
     });
 
-    // Tạo key mới dạng ngẫu nhiên
+    // Tạo key mới ngẫu nhiên
     function generateNewKey() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         const segment = () => Array.from({length: 4}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
         const newKeyCode = `FREE-${segment()}-${segment()}-${segment()}-${segment()}`;
         
         const expireTime = Date.now() + (24 * 60 * 60 * 1000);
-        
         let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
         keys.push({ key: newKeyCode, expire: expireTime });
         localStorage.setItem('adminKeysData', JSON.stringify(keys));
-        
         renderKeyList();
     }
 
@@ -478,11 +584,11 @@
         alert("Đã sao chép key: " + text);
     }
 
+    // Xóa Key & Đá văng người dùng về trang 1
     function deleteKey(index, keyVal) {
         let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
         keys.splice(index, 1);
         localStorage.setItem('adminKeysData', JSON.stringify(keys));
-        
         renderKeyList();
 
         if (currentActiveKey === keyVal) {
@@ -496,6 +602,7 @@
         keyInput.value = '';
         showMessage("Admin đã xóa key!", "error");
         currentActiveKey = null;
+        if (liveRefreshInterval) clearInterval(liveRefreshInterval);
     }
 
     function closeModal(id) {
@@ -506,31 +613,20 @@
         if (currentActiveKey) {
             let keys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
             let exists = keys.some(k => k.key === currentActiveKey);
-            if (!exists) {
-                kickToHome();
-            }
+            if (!exists) kickToHome();
         }
     });
 
+    // Bộ đếm ngược phiên làm việc trang 2
     function startSessionTimer(duration) {
         let timer = duration, minutes, seconds;
         const display = document.getElementById('countdownDisplay');
         const interval = setInterval(() => {
             minutes = parseInt(timer / 60, 10);
             seconds = parseInt(timer % 60, 10);
-
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-
-            display.textContent = minutes + ":" + seconds;
-
+            display.textContent = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
             if (--timer < 0) {
                 clearInterval(interval);
                 kickToHome();
             }
-        }, 1000);
-    }
-</script>
-
-</body>
-</html>
+     
