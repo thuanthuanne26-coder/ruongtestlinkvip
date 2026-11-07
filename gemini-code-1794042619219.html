@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ruongtestlinkvip.com</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0e12;
+            --card-bg: #16181f;
+            --accent-pink: #ff2b6d;
+            --accent-pink-hover: #e0225c;
+            --text-main: #ffffff;
+            --text-sub: #a0a5b5;
+            --danger: #ff4757;
+            --success: #2ed573;
+            --border-color: #262936;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 32px 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(255, 43, 109, 0.15);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            background: linear-gradient(135deg, #fff 30%, var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            word-break: break-all;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: #0b0c10;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            text-align: center;
+            letter-spacing: 1px;
+            transition: border-color 0.3s;
+        }
+
+        .input-box:focus {
+            border-color: var(--accent-pink);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-pink);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-pink-hover);
+        }
+
+        .btn-submit:disabled {
+            background: #444;
+            cursor: not-allowed;
+        }
+
+        .alert-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .alert-danger {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .timer-box {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .timer-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--accent-pink);
+            margin: 15px 0;
+            text-shadow: 0 0 10px rgba(255, 43, 109, 0.5);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-pink);
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .key-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #0b0c10;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .key-status {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status-unused { background: rgba(46, 213, 115, 0.2); color: var(--success); }
+        .status-used { background: rgba(255, 71, 87, 0.2); color: var(--danger); }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .btn-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .lockout-info {
+            color: var(--danger);
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">ruongtestlinkvip.com</h1>
+        </div>
+
+        <!-- MÀN HÌNH NHẬP KEY -->
+        <div id="loginSection">
+            <div class="input-group">
+                <input type="text" id="keyInput" class="input-box" placeholder="NHẬP KEY FREE-..." autocomplete="off">
+            </div>
+            <button id="submitBtn" class="btn-submit" onclick="handleActivate()">KÍCH HOẠT KEY</button>
+            <div id="errorAlert" class="alert-box alert-danger"></div>
+            <div id="lockoutText" class="lockout-info"></div>
+        </div>
+
+        <!-- MÀN HÌNH ĐÃ MỞ KHÓA -->
+        <div id="activeSection" style="display: none;">
+            <div class="timer-box">
+                <p style="color: var(--text-sub); font-size: 14px;">THỜI GIAN TRUY CẬP CÒN LẠI</p>
+                <div id="countdown" class="timer-display">60:00</div>
+                <p style="color: var(--success); font-size: 14px;">Thiết bị đã được xác thực</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NHẬP PASS ADMIN -->
+    <div id="adminAuthModal" class="modal-overlay">
+        <div class="modal" style="max-width: 350px;">
+            <button class="btn-close" onclick="closeModal('adminAuthModal')">&times;</button>
+            <h2 class="modal-title">XÁC NHẬN ADMIN</h2>
+            <input type="password" id="adminPassInput" class="input-box" placeholder="Nhập mật khẩu Admin..." style="margin-bottom: 15px;">
+            <button class="btn-submit" onclick="verifyAdminPassword()">XÁC NHẬN</button>
+        </div>
+    </div>
+
+    <!-- MODAL BẢNG QUẢN LÝ ADMIN -->
+    <div id="adminPanelModal" class="modal-overlay">
+        <div class="modal">
+            <button class="btn-close" onclick="closeModal('adminPanelModal')">&times;</button>
+            <h2 class="modal-title">QUẢN LÝ KEY ADMIN</h2>
+            
+            <button class="btn-submit" style="margin-bottom: 15px;" onclick="generateNewKey()">TẠO KEY MỚI (1 TIẾNG)</button>
+            
+            <div id="keyList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Lấy hoặc tạo HWID cho trình duyệt
+        function getDeviceId() {
+            let id = localStorage.getItem('device_hwid');
+            if (!id) {
+                id = 'DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                localStorage.setItem('device_hwid', id);
+            }
+            return id;
+        }
+
+        const currentHWID = getDeviceId();
+        const DEFAULT_KEYS = [
+            { key: "FREE-AGVP-85DD-VDU5-MPH2", usedBy: null },
+            { key: "FREE-DXZW-9BNW-6KRD-VMQB", usedBy: null }
+        ];
+
+        // Đọc dữ liệu Keys từ localStorage
+        function getDatabaseKeys() {
+            const data = localStorage.getItem('sys_keys');
+            return data ? JSON.parse(data) : DEFAULT_KEYS;
+        }
+
+        function saveDatabaseKeys(keys) {
+            localStorage.setItem('sys_keys', JSON.stringify(keys));
+        }
+
+        // Thời gian phạt lockout (giây)
+        const LOCKOUT_PENALTIES = [
+            10 * 60,         // 10 phút
+            60 * 60,         // 1 tiếng
+            24 * 60 * 60,    // 1 ngày
+            30 * 24 * 60 * 60, // 1 tháng
+            365 * 24 * 60 * 60 // 1 năm
+        ];
+
+        let activeTimer = null;
+        let lockoutTimer = null;
+
+        window.onload = function() {
+            checkActiveSession();
+            checkLockout();
+        };
+
+        // KÍCH HOẠT KEY HOẶC VÀO TRANG ADMIN
+        function handleActivate() {
+            const inputVal = document.getElementById('keyInput').value.trim();
+            const errorAlert = document.getElementById('errorAlert');
+            errorAlert.style.display = 'none';
+
+            // Đường vào Admin dành cho điện thoại/bất kỳ đâu
+            if (inputVal === 'thuandeptrai1!') {
+                document.getElementById('keyInput').value = '';
+                document.getElementById('adminAuthModal').style.display = 'flex';
+                document.getElementById('adminPassInput').focus();
+                return;
+            }
+
+            // Kiểm tra bị lockout
+            if (isLockedOut()) return;
+
+            const db = getDatabaseKeys();
+            const foundIndex = db.findIndex(item => item.key === inputVal);
+
+            if (foundIndex === -1) {
+                registerFailedAttempt("Key đã được sử dụng hoặc sai key, vui lòng thử lại!");
+                return;
+            }
+
+            const item = db[foundIndex];
+
+            // Ràng buộc thiết bị
+            if (item.usedBy && item.usedBy !== currentHWID) {
+                registerFailedAttempt("Key đã được sử dụng hoặc sai key, vui lòng thử lại!");
+                return;
+            }
+
+            // Cập nhật Key đã dùng bởi HWID hiện tại
+            db[foundIndex].usedBy = currentHWID;
+            saveDatabaseKeys(db);
+
+            // Xóa đếm thất bại
+            localStorage.removeItem('fail_attempts');
+
+            // Bắt đầu phiên 60 phút
+            const expireTime = Date.now() + (60 * 60 * 1000);
+            localStorage.setItem('session_expire', expireTime);
+            startActiveSession(expireTime);
+        }
+
+        // Xử lý khi nhập sai
+        function registerFailedAttempt(msg) {
+            let attempts = parseInt(localStorage.getItem('fail_attempts') || '0') + 1;
+            localStorage.setItem('fail_attempts', attempts);
+
+            const errorAlert = document.getElementById('errorAlert');
+            
+            if (attempts >= 5) {
+                let penaltyLevel = parseInt(localStorage.getItem('penalty_level') || '0');
+                let penaltySeconds = LOCKOUT_PENALTIES[Math.min(penaltyLevel, LOCKOUT_PENALTIES.length - 1)];
+                let lockoutUntil = Date.now() + (penaltySeconds * 1000);
+
+                localStorage.setItem('lockout_until', lockoutUntil);
+                localStorage.setItem('penalty_level', penaltyLevel + 1);
+                localStorage.removeItem('fail_attempts');
+
+                checkLockout();
+            } else {
+                errorAlert.innerText = `${msg} (${attempts}/5)`;
+                errorAlert.style.display = 'block';
+            }
+        }
+
+        // Kiểm tra phạt
+        function isLockedOut() {
+            const lockoutUntil = parseInt(localStorage.getItem('lockout_until') || '0');
+            return Date.now() < lockoutUntil;
+        }
+
+        function checkLockout() {
+            const lockoutUntil = parseInt(localStorage.getItem('lockout_until') || '0');
+            const now = Date.now();
+
+            if (now < lockoutUntil) {
+                document.getElementById('keyInput').disabled = true;
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('errorAlert').style.display = 'none';
+
+                if (lockoutTimer) clearInterval(lockoutTimer);
+                lockoutTimer = setInterval(() => {
+                    const remaining = Math.ceil((lockoutUntil - Date.now()) / 1000);
+                    if (remaining <= 0) {
+                        clearInterval(lockoutTimer);
+                        document.getElementById('keyInput').disabled = false;
+                        document.getElementById('submitBtn').disabled = false;
+                        document.getElementById('lockoutText').innerText = '';
+                    } else {
+                        document.getElementById('lockoutText').innerText = `Tài khoản tạm khóa. Thử lại sau: ${formatSeconds(remaining)}`;
+                    }
+                }, 1000);
+            }
+        }
+
+        // Kiểm tra phiên làm việc 60 phút
+        function checkActiveSession() {
+            const expireTime = parseInt(localStorage.getItem('session_expire') || '0');
+            if (Date.now() < expireTime) {
+                startActiveSession(expireTime);
+            }
+        }
+
+        function startActiveSession(expireTime) {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('activeSection').style.display = 'block';
+
+            if (activeTimer) clearInterval(activeTimer);
+
+            activeTimer = setInterval(() => {
+                const leftSeconds = Math.ceil((expireTime - Date.now()) / 1000);
+                if (leftSeconds <= 0) {
+                    clearInterval(activeTimer);
+                    localStorage.removeItem('session_expire');
+                    document.getElementById('activeSection').style.display = 'none';
+                    document.getElementById('loginSection').style.display = 'block';
+                    document.getElementById('keyInput').value = '';
+                } else {
+                    const mins = Math.floor(leftSeconds / 60).toString().padStart(2, '0');
+                    const secs = (leftSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('countdown').innerText = `${mins}:${secs}`;
+                }
+            }, 1000);
+        }
+
+        // ADMIN LOGIC
+        function verifyAdminPassword() {
+            const pass = document.getElementById('adminPassInput').value;
+            if (pass === 'thuandeptrai') {
+                closeModal('adminAuthModal');
+                document.getElementById('adminPassInput').value = '';
+                openAdminPanel();
+            } else {
+                alert('Mật khẩu Admin không chính xác!');
+            }
+        }
+
+        function openAdminPanel() {
+            renderKeyList();
+            document.getElementById('adminPanelModal').style.display = 'flex';
+        }
+
+        function renderKeyList() {
+            const db = getDatabaseKeys();
+            const container = document.getElementById('keyList');
+            container.innerHTML = '';
+
+            db.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'key-item';
+                const isUsed = !!item.usedBy;
+                div.innerHTML = `
+                    <div>
+                        <strong style="letter-spacing:1px; color:#fff;">${item.key}</strong>
+                        <div style="font-size:11px; color:var(--text-sub);">${isUsed ? 'Thiết bị: ' + item.usedBy : 'Sẵn sàng'}</div>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <span class="key-status ${isUsed ? 'status-used' : 'status-unused'}">${isUsed ? 'USED' : 'UNUSED'}</span>
+                        <button class="btn-delete" onclick="deleteKey(${index})">&times;</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function generateNewKey() {
+            const part = () => Math.random().toString(36).substring(2, 6).toUpperCase();
+            const newKey = `FREE-${part()}-${part()}-${part()}-${part()}`;
+            
+            const db = getDatabaseKeys();
+            db.push({ key: newKey, usedBy: null });
+            saveDatabaseKeys(db);
+            renderKeyList();
+        }
+
+        function deleteKey(index) {
+            const db = getDatabaseKeys();
+            db.splice(index, 1);
+            saveDatabaseKeys(db);
+            renderKeyList();
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function formatSeconds(secs) {
+            const d = Math.floor(secs / (3600 * 24));
+            const h = Math.floor((secs % (3600 * 24)) / 3600);
+            const m = Math.floor((secs % 3600) / 60);
+            const s = secs % 60;
+            if (d > 0) return `${d} ngày ${h} giờ`;
+            if (h > 0) return `${h} giờ ${m} phút`;
+            return `${m} phút ${s} giây`;
+        }
+    </script>
+</body>
+</html>
