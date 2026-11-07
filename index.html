@@ -487,7 +487,7 @@
         document.getElementById('adminPassInput').focus();
     }
 
-    // Kích hoạt Key hoặc gõ thẳng key THUANDEPTRAI để vào Admin
+    // Xử lý nút Kích Hoạt Key
     holdBtn.addEventListener('click', () => {
         if (holdCount < 10 && holdCount > 0) return;
 
@@ -497,13 +497,14 @@
             return;
         }
 
-        // Nếu nhập trực tiếp key THUANDEPTRAI thì mở bảng xác nhận Admin
+        // 1. Kiểm tra nếu nhập trực tiếp THUANDEPTRAI -> Mở bảng xác nhận Admin ngay lập tức
         if (enteredKey === "THUANDEPTRAI") {
             keyInput.value = "";
             openAdminAuth();
             return;
         }
 
+        // 2. Kiểm tra key trong danh sách hợp lệ
         let savedKeys = JSON.parse(localStorage.getItem('adminKeysData')) || [];
         const foundKey = savedKeys.find(item => item.key === enteredKey);
 
@@ -520,8 +521,13 @@
             startSessionTimer(60 * 60);
             startLiveMiraScanner();
         } else {
+            // Nhập sai key -> Đếm số lần lỗi x/5
             failCount++;
-            showMessage(`Key không đúng hoặc đã bị hủy! (${failCount}/${maxFails})`, "error");
+            if (failCount >= maxFails) {
+                showMessage(`Key không tồn tại hoặc đã bị khóa tạm thời! (${failCount}/${maxFails})`, "error");
+            } else {
+                showMessage(`Key đã được sử dụng hoặc sai key, vui lòng thử lại! (${failCount}/${maxFails})`, "error");
+            }
         }
     });
 
@@ -625,18 +631,4 @@
             seconds = parseInt(timer % 60, 10);
             display.textContent = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
             if (--timer < 0) {
-                clearInterval(interval);
-                kickToHome();
-            }
-        }, 1000);
-    }
-
-    function startLiveMiraScanner() {
-        renderLiveRooms();
-        liveRefreshInterval = setInterval(() => {
-            renderLiveRooms();
-        }, 2000);
-    }
-
-    function renderLiveRooms() {
-     
+                clea
